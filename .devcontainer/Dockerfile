@@ -15,7 +15,6 @@ ARG PS_PACKAGE=powershell-${PS_VERSION}-linux-alpine-x64.tar.gz
 ARG PS_PACKAGE_URL=https://github.com/PowerShell/PowerShell/releases/download/v${PS_VERSION}/${PS_PACKAGE}
 ARG PS_INSTALL_VERSION=6
 
-
 # define the folder we will be installing PowerShell to
 ENV PS_INSTALL_FOLDER=/opt/microsoft/powershell/$PS_INSTALL_VERSION
 
@@ -25,8 +24,8 @@ RUN mkdir -p ${PS_INSTALL_FOLDER}
 # Download the Linux tar.gz and save it
 # ADD ${PS_PACKAGE_URL} /tmp/linux.tar.gz
 # Unzip the Linux tar.gz
-RUN wget -q -O /tmp/linux.tar.gz ${PS_PACKAGE_URL} \
-    && tar zxf /tmp/linux.tar.gz -C ${PS_INSTALL_FOLDER} -v
+RUN wget -O /tmp/linux.tar.gz ${PS_PACKAGE_URL} \
+  && tar zxf /tmp/linux.tar.gz -C ${PS_INSTALL_FOLDER} -v
 
 # Start a new stage so we lose all the tar.gz layers from the final image
 FROM ${imageRepo}:${fromTag}
@@ -81,11 +80,9 @@ RUN apk -X http://dl-cdn.alpinelinux.org/alpine/v3.8/main add --no-cache ca-cert
 RUN pwsh -NoLogo -NoProfile -Command " \
   Install-Module posh-git -Force; \
   Install-Module oh-my-posh -Force; \
-  Install-Module devtoolbox -Force;" \
-  && { \
-      echo "Import-Module oh-my-posh"; \
-      echo "Import-Module devtoolbox"; \
-      echo "Set-Theme Powerlevel10k-lean" \
-    } >> /opt/microsoft/powershell/6/profile.ps1
+  Install-Module devtoolbox -Force" \
+  && echo "Import-Module devtoolbox" >> /opt/microsoft/powershell/6/profile.ps1 \
+  && echo "Import-Module oh-my-posh"  >> /opt/microsoft/powershell/6/profile.ps1 \
+  && echo "Set-Theme Powerlevel10k-Lean" >> /opt/microsoft/powershell/6/profile.ps1
 
 CMD [ "pwsh", "-nologo" ]
