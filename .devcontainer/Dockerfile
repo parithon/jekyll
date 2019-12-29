@@ -23,8 +23,8 @@ RUN mkdir -p ${PS_INSTALL_FOLDER}
 
 # Download the Linux tar.gz and save it
 # ADD ${PS_PACKAGE_URL} /tmp/linux.tar.gz
+RUN wget -q -O /tmp/linux.tar.gz ${PS_PACKAGE_URL}
 # Unzip the Linux tar.gz
-RUN wget -O /tmp/linux.tar.gz ${PS_PACKAGE_URL}
 RUN tar zxf /tmp/linux.tar.gz -C ${PS_INSTALL_FOLDER} -v
 
 # Start a new stage so we lose all the tar.gz layers from the final image

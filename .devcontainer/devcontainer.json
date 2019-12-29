@@ -21,7 +21,7 @@
 	// You can edit these settings after create using File > Preferences > Settings > Remote.
 	"settings": {
 		// This dev container does include /bin/bash if you prefer to use it instead of ash.
-		// "terminal.integrated.shell.linux": "/bin/bash"
+		"terminal.integrated.shell.linux": "/usr/bin/pwsh"
 	},
 
 	// Use 'appPort' to create a container with published ports. If the port isn't working, be sure
