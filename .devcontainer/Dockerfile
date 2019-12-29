@@ -24,8 +24,8 @@ RUN mkdir -p ${PS_INSTALL_FOLDER}
 # Download the Linux tar.gz and save it
 # ADD ${PS_PACKAGE_URL} /tmp/linux.tar.gz
 # Unzip the Linux tar.gz
-RUN wget -O /tmp/linux.tar.gz ${PS_PACKAGE_URL} \
-  && tar zxf /tmp/linux.tar.gz -C ${PS_INSTALL_FOLDER} -v
+RUN wget -O /tmp/linux.tar.gz ${PS_PACKAGE_URL}
+RUN tar zxf /tmp/linux.tar.gz -C ${PS_INSTALL_FOLDER} -v
 
 # Start a new stage so we lose all the tar.gz layers from the final image
 FROM ${imageRepo}:${fromTag}
@@ -43,6 +43,13 @@ ENV PS_INSTALL_FOLDER=/opt/microsoft/powershell/$PS_INSTALL_VERSION \
     LANG=en_US.UTF-8 \
     # set a fixed location for the Module analysis cache
     PSModuleAnalysisCachePath=/var/cache/microsoft/powershell/PSModuleAnalysisCache/ModuleAnalysisCache
+
+# Install gpg2, ssh, and socat for socket connect to Windows
+RUN apk add --no-cache socat \
+  gnupg \
+  openssh \
+  && mkdir -p /root/.gnupg \
+  && chmod 700 /root/.gnupg
 
 # Install dotnet dependencies and ca-certificates
 RUN apk -X http://dl-cdn.alpinelinux.org/alpine/v3.8/main add --no-cache ca-certificates less \
@@ -78,11 +85,11 @@ RUN apk -X http://dl-cdn.alpinelinux.org/alpine/v3.8/main add --no-cache ca-cert
 
 # Install powershell theme
 RUN pwsh -NoLogo -NoProfile -Command " \
-  Install-Module posh-git -Force; \
-  Install-Module oh-my-posh -Force; \
-  Install-Module devtoolbox -Force" \
-  && echo "Import-Module devtoolbox" >> /opt/microsoft/powershell/6/profile.ps1 \
-  && echo "Import-Module oh-my-posh"  >> /opt/microsoft/powershell/6/profile.ps1 \
-  && echo "Set-Theme Powerlevel10k-Lean" >> /opt/microsoft/powershell/6/profile.ps1
+  Install-Module posh-git -Scope AllUsers -Force; \
+  Install-Module oh-my-posh -Scope AllUsers -Force; \
+  Install-Module devtoolbox -Scope AllUsers -Force"
 
-CMD [ "pwsh", "-nologo" ]
+COPY .bashrc /root
+COPY profile.ps1 /opt/microsoft/powershell/6/profile.ps1
+
+ENV ENV="/root/.bashrc"

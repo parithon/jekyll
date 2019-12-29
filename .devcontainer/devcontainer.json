@@ -11,12 +11,17 @@
 
 	// Uncomment the next line if you will use a ptrace-based debugger like C++, Go, and Rust
 	// "runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ],
+	"runArgs": [
+		"-v", "${env:APPDATA}/gnupg/pubring.kbx:/root/.gnupg/pubring.kbx",
+		"-v", "${env:APPDATA}/gnupg/trustdb.gpg:/root/.gnupg/trustdb.gpg",
+		"-v", "${env:APPDATA}/gnupg/S.gpg-agent:/root/.gnupg-localhost/S.gpg-agent:ro"
+	],
 	
 	// Use 'settings' to set *default* container specific settings.json values on container create. 
 	// You can edit these settings after create using File > Preferences > Settings > Remote.
 	"settings": {
 		// This dev container does include /bin/bash if you prefer to use it instead of ash.
-		"terminal.integrated.shell.linux": "/usr/bin/pwsh"
+		// "terminal.integrated.shell.linux": "/bin/bash"
 	},
 
 	// Use 'appPort' to create a container with published ports. If the port isn't working, be sure
@@ -32,5 +37,8 @@
 	// Add the IDs of extensions you want installed when the container is created in the array 
 	// below. Note that some extensions may not work in Alpine Linux due to glibc dependencies 
 	// in native code inside the extension. See https://aka.ms/vscode-remote/linux for details.
-	"extensions": []
+	"extensions": [
+		"yzhang.markdown-all-in-one",
+		"ginfuru.ginfuru-vscode-jekyll-syntax"
+	]
 }
